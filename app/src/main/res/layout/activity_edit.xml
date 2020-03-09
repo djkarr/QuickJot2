@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/TextTheme"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
+    tools:context=".EditActivity">
+
+    <Spinner
+        android:id="@+id/categorySpinner"
+        style="@style/DarkTheme"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:dropDownWidth="match_parent"
+        android:entries="@array/spinner_categories"
+        android:gravity="center_horizontal"
+        android:popupBackground="@color/colorPrimaryLight"
+        android:textAlignment="center"
+        android:textColor="@color/colorAccent"
+        android:tint="@color/colorPrimaryDark"
+        app:layout_constraintBottom_toBottomOf="@+id/textView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toEndOf="@+id/textView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="0dp"
+        android:layout_height="62dp"
+        android:background="@color/colorPrimaryLight"
+        android:gravity="center"
+        android:text="@string/label_category"
+        android:textSize="21sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorAccent"
+        app:layout_constraintEnd_toStartOf="@+id/categorySpinner"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginVertical="0dp"
+        android:background="@drawable/rectangle_bordered"
+        android:ems="10"
+        android:gravity="top|start"
+        android:hint="@string/edit_note_hint"
+        android:inputType="textCapSentences|textMultiLine"
+        android:padding="12sp"
+        android:textColor="@color/colorAccent"
+        android:textColorHint="@color/colorAccent"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/guidelineBottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/categorySpinner" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/list_view_fab"
+        style="@style/FABTheme"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_margin="8dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:padding="0dp"
+        android:src="@drawable/list_rotated"
+        app:borderWidth="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/guidelineBottom" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/delete_fab"
+        style="@style/FABTheme"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:background="@color/colorPrimaryLight"
+        android:clickable="true"
+        android:src="@drawable/ic_delete_forever_24dp"
+        app:borderWidth="2dp"
+        app:layout_constraintBottom_toBottomOf="@+id/list_view_fab"
+        app:layout_constraintEnd_toStartOf="@+id/save_note_fab"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/list_view_fab"
+        app:layout_constraintTop_toTopOf="@+id/list_view_fab" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/save_note_fab"
+        style="@style/FABTheme"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_margin="8dp"
+        android:background="@color/colorPrimaryLight"
+        android:clickable="true"
+        android:src="@drawable/ic_save_24dp"
+        app:borderWidth="2dp"
+        app:layout_constraintBottom_toBottomOf="@+id/list_view_fab"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/list_view_fab" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="75dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

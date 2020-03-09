@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">QuickJot2</string>
+    <string name="label_category">Category:</string>
+    <string name="edit_note_hint">Add note here</string>
+
+
+    <string-array name="spinner_categories">
+        <item>General</item>
+        <item>TO-DO</item>
+        <item>Shopping</item>
+        <item>Idea</item>
+        <item>Goal</item>
+        <item>Read / Watch</item>
+        <item>Prayer</item>
+    </string-array>
+</resources>
