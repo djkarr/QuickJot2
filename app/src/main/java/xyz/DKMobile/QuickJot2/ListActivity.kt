@@ -52,11 +52,15 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    /**
+     * Spinner onItemSelected queries the database for notes that fall into the selection category.
+     * It then only displays those notes.
+     */
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         if(position != 0){
             val text: String = list[position]
             var categorizedList: List<NoteEntity> = ArrayList()
-            //TODO implement spinner sort functionality
+
             GlobalScope.launch(Dispatchers.Main) {
                 withContext(Dispatchers.IO) {
                     categorizedList = db.noteDao().getByCategory(text)
@@ -66,7 +70,6 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         } else {
             addNotes(this)
         }
-
     }
 
     //TODO if there are no more listeners, remove this function

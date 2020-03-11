@@ -57,6 +57,9 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         }
     }
 
+    /**
+     * After the listeners have been initialized,
+     */
     fun setEditConditions(intentUID: Int){
         uid = intentUID
         editState = true
@@ -71,7 +74,8 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         super.onSaveInstanceState(outState)
 
         val userText = edittext.text
-        val category = spinner.selectedItem.toString()
+        //Don't need category?
+        //val category = spinner.selectedItem.toString()
         val saveEditState = editState
         val saveUID = uid
 
