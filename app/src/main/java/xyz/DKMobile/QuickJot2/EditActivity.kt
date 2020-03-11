@@ -55,7 +55,6 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         if(intentUID > -1){
             setEditConditions(intentUID)
         }
-
     }
 
     fun setEditConditions(intentUID: Int){
@@ -66,7 +65,6 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         spinner.setSelection(spinnerIndex)
         var text = intent.getStringExtra("text")
         edittext.setText(text)
-
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
@@ -89,7 +87,6 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         edittext.setText(userText)
         uid = savedInstanceState!!.getInt("uid")
         editState = savedInstanceState!!.getBoolean("editState")
-
     }
 
     /**
@@ -105,11 +102,6 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         val text: String = list[position]
     }
-
-    //TODO handle an edit of existing note instead of new one
-    //TODO handle update of database
-    //TODO make sure back button doesn't stack activities
-
 
     /**
      * User clicks Yes to delete dialog message. Deletes from database, or simply clears the screen
@@ -162,7 +154,7 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         listButton.setOnClickListener {
             val intent = Intent(this,ListActivity::class.java).apply {
                 //addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-                //addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+                addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
             }
             startActivity(intent)
         }

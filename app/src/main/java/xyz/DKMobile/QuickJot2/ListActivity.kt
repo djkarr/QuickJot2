@@ -53,7 +53,20 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        val text: String = list[position]
+        if(position != 0){
+            val text: String = list[position]
+            var categorizedList: List<NoteEntity> = ArrayList()
+            //TODO implement spinner sort functionality
+            GlobalScope.launch(Dispatchers.Main) {
+                withContext(Dispatchers.IO) {
+                    categorizedList = db.noteDao().getByCategory(text)
+                }
+                rv.adapter = NoteAdapter(categorizedList, applicationContext)
+            }
+        } else {
+            addNotes(this)
+        }
+
     }
 
     //TODO if there are no more listeners, remove this function

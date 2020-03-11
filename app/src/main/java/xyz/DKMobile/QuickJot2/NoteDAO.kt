@@ -11,7 +11,7 @@ interface NoteDAO {
     suspend fun getByuID(uid: Int): NoteEntity
 
     @Query("SELECT * FROM Notes WHERE category LIKE :category")
-    suspend fun getByCategory(category: String): NoteEntity
+    suspend fun getByCategory(category: String): List<NoteEntity>
 
     @Insert
     suspend fun insert(note: NoteEntity):Long

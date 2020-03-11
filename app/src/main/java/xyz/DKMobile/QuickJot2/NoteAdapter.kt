@@ -41,7 +41,7 @@ RecyclerView.Adapter<NoteAdapter.ViewHolder>(){
                 putExtra("uid",uid)
                 putExtra("category",category)
                 putExtra("text",text)
-               // addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+                addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
             }
             startActivity(context,intent,null)
         }
