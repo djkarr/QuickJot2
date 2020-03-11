@@ -7,8 +7,8 @@ interface NoteDAO {
     @Query("SELECT * FROM Notes")
     suspend fun getAll(): List<NoteEntity>
 
-//    @Query("SELECT * FROM Notes WHERE uid LIKE :uid")
-  //  suspend fun getByuID(uid: Int): NoteEntity
+    @Query("SELECT * FROM Notes WHERE uid LIKE :uid")
+    suspend fun getByuID(uid: Int): NoteEntity
 
     @Query("SELECT * FROM Notes WHERE category LIKE :category")
     suspend fun getByCategory(category: String): NoteEntity

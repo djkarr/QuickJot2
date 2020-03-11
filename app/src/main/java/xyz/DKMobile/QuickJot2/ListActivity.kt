@@ -19,6 +19,9 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+/**
+ * An activity which shows all notes in a two column, selectable list.
+ */
 class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
     var noteList: List<NoteEntity> = ArrayList()
     lateinit var db: AppDatabase
@@ -37,17 +40,11 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
             applicationContext,
             AppDatabase::class.java, "notes.db"
         ).build()
-        //Query
-
-        Log.i("length-----POOOOSSSSTTTT--------------", noteList.size.toString())
 
         spinner = findViewById(R.id.categoryListSpinner)
         rv = findViewById(R.id.recyclerViewNotes)
 
         initListeners()
-
-//        rv.adapter = NoteAdapter(noteList,this)
-//        rv.layoutManager = GridLayoutManager(this,2)
         addNotes(this)
     }
 
@@ -59,44 +56,38 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         val text: String = list[position]
     }
 
+    //TODO if there are no more listeners, remove this function
     fun initListeners(){
         initSpinner()
     }
 
+    /**
+     * Initializes the category spinner.
+     */
     fun initSpinner() {
-        spinner.setOnItemSelectedListener(this)
+        spinner.onItemSelectedListener = this
         val array_adapter = ArrayAdapter(this,R.layout.list_spinner_selected_item,list)
         array_adapter.setDropDownViewResource(R.layout.spinner_item)
-        spinner.setAdapter(array_adapter)
+        spinner.adapter = array_adapter
     }
 
+    /**
+     * Queries the database for all notes to populate the activity.
+     * Then sets the recycler view adapter and layout manager.
+     */
     fun addNotes(context: Context){
-        //TODO query database and get list of notes
-        Log.i("Reached ADDNOTES!","ARRIVED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         GlobalScope.launch(Dispatchers.Main){
             withContext(Dispatchers.IO){
                 noteList = db.noteDao().getAll()
-                Log.i("length-------------------", noteList.size.toString())
-                for(i in noteList){
-                    Log.i("addNotes",i.noteText)
-                }
             }
             rv.adapter = NoteAdapter(noteList,context)
             rv.layoutManager = GridLayoutManager(context,2)
         }
-
     }
-
-//    class ListViewModel: ViewModel(){
-//        var liveList: MutableLiveData<ArrayList<NoteEntity>> = MutableLiveData()
-//        init {
-//            liveList.value = arrayListOf()
-//        }
-//    }
 }
 
 /*
-
+----------------------------------------------Answer from StackOverflow------------------------------------
 In coroutines you can make a queue of non-identical coroutine codes. For example one block from coroutine1
 and another one from coroutine2 and make them run sequentially. It is possible using
 withContext(CoroutineContext)

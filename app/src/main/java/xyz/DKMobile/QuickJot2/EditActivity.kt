@@ -46,7 +46,27 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
             applicationContext,
             AppDatabase::class.java, "notes.db"
         ).build()
+
         initListeners()
+
+        //Get uid from intent and check if it's valid
+        val intentUID = intent.getIntExtra("uid",-1)
+        //If editing existing note from database
+        if(intentUID > -1){
+            setEditConditions(intentUID)
+        }
+
+    }
+
+    fun setEditConditions(intentUID: Int){
+        uid = intentUID
+        editState = true
+        var savedCategory = intent.getStringExtra("category")
+        var spinnerIndex = list.indexOf(savedCategory)
+        spinner.setSelection(spinnerIndex)
+        var text = intent.getStringExtra("text")
+        edittext.setText(text)
+
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
@@ -72,15 +92,29 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
 
     }
 
+    /**
+     * (Spinner)
+     */
     override fun onNothingSelected(parent: AdapterView<*>?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    /**
+     * (Spinner)
+     */
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         val text: String = list[position]
     }
 
-    //User clicks Yes to delete dialog message
+    //TODO handle an edit of existing note instead of new one
+    //TODO handle update of database
+    //TODO make sure back button doesn't stack activities
+
+
+    /**
+     * User clicks Yes to delete dialog message. Deletes from database, or simply clears the screen
+     * if it hasn't been stored yet.
+     */
     fun deletePositiveClick() {
         if(editState){
             GlobalScope.launch(Dispatchers.IO){
@@ -93,6 +127,9 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         }
     }
 
+    /**
+     * Reset the activity to a blank state with the first spinner item selected.
+     */
     fun clearText() {
         edittext.setText("")
         uid = 0
@@ -100,6 +137,9 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         editState = false
     }
 
+    /**
+     * Initialize the various listeners.
+     */
     fun initListeners() {
         initSpinner()
         initList()
@@ -114,14 +154,23 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         spinner.setAdapter(array_adapter)
     }
 
+    /**
+     * Clicking the list view fab starts the List View Activity.
+     */
     fun initList() {
         val listButton = findViewById<FloatingActionButton>(R.id.list_view_fab)
         listButton.setOnClickListener {
-            val intent = Intent(this,ListActivity::class.java)
+            val intent = Intent(this,ListActivity::class.java).apply {
+                //addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                //addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+            }
             startActivity(intent)
         }
     }
 
+    /**
+     * Clicking the delete fab starts a call the the delete dialog.
+     */
     fun initDelete() {
         val deleteButton = findViewById<FloatingActionButton>(R.id.delete_fab)
         deleteButton.setOnClickListener {
@@ -129,6 +178,10 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         }
     }
 
+    /**
+     * Clicking the save button causes the note to be saved.
+     * Either as a new database entry or as an update to an existing one.
+     */
     fun initSave() {
         val saveButton = findViewById<FloatingActionButton>(R.id.save_note_fab)
         saveButton.setOnClickListener {
@@ -158,7 +211,9 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
     }
 
 
-    // Extension function to show toast message
+    /**
+     * Extension function to show toast message.
+     */
     fun Context.toast(message: String) {
         var toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
         toast.setGravity(Gravity.CENTER,0,480)
@@ -167,6 +222,9 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
 
     fun doNothing() {}
 
+    /**
+     * Creates and shows an alert dialog to verify if user wants to delete the note.
+     */
     fun showDeleteDialog() {
         // Late initialize an alert dialog object
         lateinit var dialog: AlertDialog
