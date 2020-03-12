@@ -35,8 +35,6 @@ RecyclerView.Adapter<NoteAdapter.ViewHolder>(){
 
         //Set listener on each individual list item
         holder.listboxview.setOnClickListener {
-            //TODO change toast to new activity with intent of the selected note
-            Toast.makeText(context,"clicked $position",Toast.LENGTH_SHORT).show()
             var intent = Intent(context, EditActivity::class.java).apply {
                 putExtra("uid",uid)
                 putExtra("category",category)
@@ -48,7 +46,7 @@ RecyclerView.Adapter<NoteAdapter.ViewHolder>(){
     }
 
     /**
-     * Populates
+     * Populates arraylist with note text.
      */
     fun populateList(){
         for(i in items){

@@ -4,26 +4,24 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.PersistableBundle
+import android.view.Gravity
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.room.Room
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import android.widget.Toast
-import androidx.core.app.ComponentActivity
-import androidx.core.app.ComponentActivity.ExtraData
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import android.view.Gravity
-import androidx.appcompat.app.AlertDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-
+/**
+ * The activity where a note is being created/edited. Can categorize, save, delete,
+ * and launch the list activity.
+ *
+ * TODO decide if launching list or hitting back with an edit should prompt an 'are you sure?' dialog
+ */
 class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
     lateinit var edittext: EditText
     lateinit var spinner: Spinner
