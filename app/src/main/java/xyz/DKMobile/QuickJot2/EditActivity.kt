@@ -56,7 +56,7 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
     }
 
     /**
-     * After the listeners have been initialized,
+     * After the listeners have been initialized, set the member variables to the saved values.
      */
     fun setEditConditions(intentUID: Int){
         uid = intentUID
@@ -114,11 +114,9 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
             GlobalScope.launch(Dispatchers.IO){
                 var note = NoteEntity(uid,spinner.selectedItem.toString(),edittext.text.toString())
                 db.noteDao().delete(note)
-                clearText()
             }
-        } else {
-            clearText()
-        }
+        } else {}
+        clearText()
     }
 
     /**
@@ -141,6 +139,9 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         initSave()
     }
 
+    /**
+     * Initialize the category spinner.
+     */
     fun initSpinner() {
         spinner.setOnItemSelectedListener(this)
         val array_adapter = ArrayAdapter(this,R.layout.spinner_selected_item,list)

@@ -1,6 +1,7 @@
 package xyz.DKMobile.QuickJot2
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -14,6 +15,7 @@ import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -72,9 +74,34 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         }
     }
 
-    //TODO if there are no more listeners, remove this function
+    /**
+     * Initialize the listeners.
+     */
     fun initListeners(){
         initSpinner()
+        initSort()
+        initAddNew()
+    }
+
+    fun initAddNew(){
+        val addNew = findViewById<FloatingActionButton>(R.id.add_new_fab)
+        addNew.setOnClickListener{
+            val intent = Intent(this,EditActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+            }
+            startActivity(intent)
+        }
+    }
+
+    /**
+     * Initializes the sort button. Reverses the starting order.
+     */
+    fun initSort(){
+        val sort = findViewById<FloatingActionButton>(R.id.sort_list_fab)
+        sort.setOnClickListener{
+            noteList = noteList.asReversed()
+            rv.adapter = NoteAdapter(noteList,this)
+        }
     }
 
     /**

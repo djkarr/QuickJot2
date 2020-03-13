@@ -49,12 +49,40 @@
         android:id="@+id/recyclerViewNotes"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/colorPrimary"
+        android:background="@drawable/rectangle_primary_dark_border_1dp"
         android:scrollbars="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/sort_list_fab"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/categoryListSpinner"
-        app:layout_constraintVertical_weight="9" />
+        app:layout_constraintVertical_weight="9"
+        android:layout_marginBottom="8dp"
+        android:paddingVertical="4dp"
+        />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/sort_list_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:src="@drawable/sort_arrows_24dp"
+        android:scaleY="-1"
+        android:rotation="90"
+        style="@style/FABTheme"
+        app:borderWidth="2dp"
+        android:layout_margin="8dp"
+        />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_new_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        style="@style/FABTheme"
+        app:borderWidth="2dp"
+        android:layout_margin="8dp"
+        android:src="@drawable/add_24dp"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
