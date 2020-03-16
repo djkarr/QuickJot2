@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Quick! Jot</string>
     <string name="label_category">Category:</string>
-    <string name="edit_note_hint">Jot note here...</string>
+    <string name="edit_note_hint">Jot notes here...</string>
 
 
     <string-array name="spinner_categories">

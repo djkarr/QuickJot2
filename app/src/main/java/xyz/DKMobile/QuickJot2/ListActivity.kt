@@ -45,9 +45,28 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
 
         spinner = findViewById(R.id.categoryListSpinner)
         rv = findViewById(R.id.recyclerViewNotes)
-
+        val emptyList = arrayListOf<NoteEntity>()
+        //TODO notes are getting remade by initializer functions
+        rv.adapter = NoteAdapter(emptyList, this)
         initListeners()
         addNotes(this)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+
+        val category = spinner.selectedItem.toString()
+        outState?.putCharSequence("category",category)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+
+        val category = savedInstanceState?.getCharSequence("category")
+        val index = list.indexOf(category)
+        spinner.setSelection(index)
+        sortByCategory(index)
+
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -60,17 +79,21 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
      */
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         if(position != 0){
-            val text: String = list[position]
-            var categorizedList: List<NoteEntity> = ArrayList()
-
-            GlobalScope.launch(Dispatchers.Main) {
-                withContext(Dispatchers.IO) {
-                    categorizedList = db.noteDao().getByCategory(text)
-                }
-                rv.adapter = NoteAdapter(categorizedList, applicationContext)
-            }
+            sortByCategory(position)
         } else {
             addNotes(this)
+        }
+    }
+
+    fun sortByCategory(position: Int){
+        val text: String = list[position]
+        var categorizedList: List<NoteEntity> = ArrayList()
+
+        GlobalScope.launch(Dispatchers.Main) {
+            withContext(Dispatchers.IO) {
+                categorizedList = db.noteDao().getByCategory(text)
+            }
+            rv.adapter = NoteAdapter(categorizedList, this@ListActivity)
         }
     }
 
