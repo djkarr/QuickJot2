@@ -85,6 +85,23 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         }
     }
 
+    /**
+     * This version sorts the notelist instead of making a new query. Breaks sorting function.
+     */
+    /*fun sortByCategory(position: Int){
+        val text: String = list[position]
+        var categorizedList: MutableList<NoteEntity> = ArrayList()
+        for(note in noteList){
+            if(note.category == text){
+                categorizedList.add(note)
+            }
+        }
+        rv.adapter = NoteAdapter(categorizedList, this@ListActivity)
+    } */
+
+    /**
+     * This version sorts by making a new query.
+     */
     fun sortByCategory(position: Int){
         val text: String = list[position]
         var categorizedList: List<NoteEntity> = ArrayList()
@@ -93,9 +110,11 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
             withContext(Dispatchers.IO) {
                 categorizedList = db.noteDao().getByCategory(text)
             }
-            rv.adapter = NoteAdapter(categorizedList, this@ListActivity)
+            noteList = categorizedList
+            rv.adapter = NoteAdapter(noteList, this@ListActivity)
         }
     }
+
 
     /**
      * Initialize the listeners.
@@ -106,6 +125,9 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         initAddNew()
     }
 
+    /**
+     * User clicks the 'Add New' button and the edit activity is launched.
+     */
     fun initAddNew(){
         val addNew = findViewById<FloatingActionButton>(R.id.add_new_fab)
         addNew.setOnClickListener{
