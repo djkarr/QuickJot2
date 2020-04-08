@@ -1,4 +1,4 @@
-package xyz.DKMobile.QuickJot2
+package xyz.DKMobile.QuickJot
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

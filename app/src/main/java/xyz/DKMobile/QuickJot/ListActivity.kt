@@ -1,18 +1,15 @@
-package xyz.DKMobile.QuickJot2
+package xyz.DKMobile.QuickJot
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -45,11 +42,20 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
 
         spinner = findViewById(R.id.categoryListSpinner)
         rv = findViewById(R.id.recyclerViewNotes)
+        rv.layoutManager = GridLayoutManager(this,2)
         val emptyList = arrayListOf<NoteEntity>()
         //TODO notes are getting remade by initializer functions
         rv.adapter = NoteAdapter(emptyList, this)
         initListeners()
-        addNotes(this)
+        if(savedInstanceState == null){
+            addNotes(this)
+        } else {
+            val category = savedInstanceState?.getCharSequence("category")
+            val index = list.indexOf(category)
+            spinner.setSelection(index)
+            sortByCategory(index)
+        }
+
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
@@ -59,15 +65,10 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         outState?.putCharSequence("category",category)
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
-        super.onRestoreInstanceState(savedInstanceState)
-
-        val category = savedInstanceState?.getCharSequence("category")
-        val index = list.indexOf(category)
-        spinner.setSelection(index)
-        sortByCategory(index)
-
-    }
+//    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+//        super.onRestoreInstanceState(savedInstanceState)
+//
+//    }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -104,13 +105,15 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
      */
     fun sortByCategory(position: Int){
         val text: String = list[position]
-        var categorizedList: List<NoteEntity> = ArrayList()
+        //var categorizedList: List<NoteEntity> = ArrayList()
 
         GlobalScope.launch(Dispatchers.Main) {
             withContext(Dispatchers.IO) {
-                categorizedList = db.noteDao().getByCategory(text)
+                noteList = db.noteDao().getByCategory(text)
+                //categorizedList = db.noteDao().getByCategory(text)
             }
-            noteList = categorizedList
+            //rv.adapter!!.notifyDataSetChanged()
+            //noteList = categorizedList
             rv.adapter = NoteAdapter(noteList, this@ListActivity)
         }
     }

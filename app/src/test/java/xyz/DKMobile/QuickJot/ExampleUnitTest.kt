@@ -1,4 +1,4 @@
-package xyz.DKMobile.QuickJot2
+package xyz.DKMobile.QuickJot
 
 import org.junit.Test
 

@@ -13,6 +13,5 @@
         android:padding="16dp"
         android:background="@drawable/rectangle_dark_light_border_1dp"
         android:textColor="@color/colorAccent"
-
         />
 </LinearLayout>
