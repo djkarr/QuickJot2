@@ -109,7 +109,12 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
 
         GlobalScope.launch(Dispatchers.Main) {
             withContext(Dispatchers.IO) {
-                noteList = db.noteDao().getByCategory(text)
+                if(position == 0){
+                    noteList = db.noteDao().getAll()
+                } else {
+                    noteList = db.noteDao().getByCategory(text)
+                }
+
                 //categorizedList = db.noteDao().getByCategory(text)
             }
             //rv.adapter!!.notifyDataSetChanged()
