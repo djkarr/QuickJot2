@@ -5,6 +5,7 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.list_item.view.*
@@ -26,7 +27,7 @@ RecyclerView.Adapter<NoteAdapter.ViewHolder>(){
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder?.listboxview?.text = list.get(position)
+        holder.listboxview?.text = list.get(position)
         var uid = items.get(position).uid
         var category = items.get(position).category
         var text = items.get(position).noteText
@@ -52,13 +53,8 @@ RecyclerView.Adapter<NoteAdapter.ViewHolder>(){
         }
     }
 
-    fun update(newList: ArrayList<String>){
-        list = newList
-        notifyDataSetChanged()
-    }
-
     class ViewHolder (view: View) : RecyclerView.ViewHolder(view) {
         // Holds the TextView that will add each note to
-        val listboxview = view.list_box_view
+        val listboxview: TextView = view.list_box_view
     }
 }

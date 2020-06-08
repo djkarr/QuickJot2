@@ -9,7 +9,6 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -19,7 +18,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
- * An activity which shows all notes in a two column, selectable list.
+ * An activity which shows all notes in a two column, selectable list inside a RecyclerView.
  */
 class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
     var noteList: List<NoteEntity> = ArrayList()
@@ -44,13 +43,12 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         rv = findViewById(R.id.recyclerViewNotes)
         rv.layoutManager = GridLayoutManager(this,2)
         val emptyList = arrayListOf<NoteEntity>()
-        //TODO notes are getting remade by initializer functions
         rv.adapter = NoteAdapter(emptyList, this)
         initListeners()
         if(savedInstanceState == null){
             addNotes(this)
         } else {
-            val category = savedInstanceState?.getCharSequence("category")
+            val category = savedInstanceState.getCharSequence("category")
             val index = list.indexOf(category)
             spinner.setSelection(index)
             sortByCategory(index)
@@ -58,17 +56,12 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
 
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
         val category = spinner.selectedItem.toString()
-        outState?.putCharSequence("category",category)
+        outState.putCharSequence("category",category)
     }
-
-//    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
-//        super.onRestoreInstanceState(savedInstanceState)
-//
-//    }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -87,25 +80,10 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
     }
 
     /**
-     * This version sorts the notelist instead of making a new query. Breaks sorting function.
-     */
-    /*fun sortByCategory(position: Int){
-        val text: String = list[position]
-        var categorizedList: MutableList<NoteEntity> = ArrayList()
-        for(note in noteList){
-            if(note.category == text){
-                categorizedList.add(note)
-            }
-        }
-        rv.adapter = NoteAdapter(categorizedList, this@ListActivity)
-    } */
-
-    /**
      * This version sorts by making a new query.
      */
     fun sortByCategory(position: Int){
         val text: String = list[position]
-        //var categorizedList: List<NoteEntity> = ArrayList()
 
         GlobalScope.launch(Dispatchers.Main) {
             withContext(Dispatchers.IO) {
@@ -114,11 +92,7 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
                 } else {
                     noteList = db.noteDao().getByCategory(text)
                 }
-
-                //categorizedList = db.noteDao().getByCategory(text)
             }
-            //rv.adapter!!.notifyDataSetChanged()
-            //noteList = categorizedList
             rv.adapter = NoteAdapter(noteList, this@ListActivity)
         }
     }
@@ -168,8 +142,7 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
     }
 
     /**
-     * Queries the database for all notes to populate the activity.
-     * Then sets the recycler view adapter and layout manager.
+     * Queries the database for all notes to populate the activity and updates the RV adapter.
      */
     fun addNotes(context: Context){
         GlobalScope.launch(Dispatchers.Main){
@@ -177,41 +150,6 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
                 noteList = db.noteDao().getAll()
             }
             rv.adapter = NoteAdapter(noteList,context)
-            rv.layoutManager = GridLayoutManager(context,2)
         }
     }
 }
-
-/*
-----------------------------------------------Answer from StackOverflow------------------------------------
-In coroutines you can make a queue of non-identical coroutine codes. For example one block from coroutine1
-and another one from coroutine2 and make them run sequentially. It is possible using
-withContext(CoroutineContext)
-
-Assume this code:
-
-fun uiCode() {
-  // doing things specially on mainThread
-}
-
-fun uiCode2() {
-  // More work on mainThread
-}
-
-fun ioCode() {
-  // Doing something not related to mainThread.
-}
-
-fun main() {
-
-  launch(Dispatchers.Main) { // 1- run a coroutine
-     uiCode() // will run on MainThread
-     withContext(Dispachers.IO) { // 2- Coroutine will wait for ioCode
-         ioCode() // Will run on ioThread
-     }
-     uiCode2() // 3- And then it will run this part
-  }
-}
-
-If you wanted to do it asyncronously, use launch(), instead of withContext().
- */

@@ -68,18 +68,16 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         edittext.setText(text)
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
         val userText = edittext.text
-        //Don't need category?
-        //val category = spinner.selectedItem.toString()
         val saveEditState = editState
         val saveUID = uid
 
-        outState?.putCharSequence("savedText",userText)
-        outState?.putBoolean("editState",saveEditState)
-        outState?.putInt("uid",saveUID)
+        outState.putCharSequence("savedText",userText)
+        outState.putBoolean("editState",saveEditState)
+        outState.putInt("uid",saveUID)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
@@ -88,7 +86,7 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         val userText = savedInstanceState?.getCharSequence("savedText")
         edittext.setText(userText)
         uid = savedInstanceState!!.getInt("uid")
-        editState = savedInstanceState!!.getBoolean("editState")
+        editState = savedInstanceState.getBoolean("editState")
     }
 
     /**
@@ -115,7 +113,7 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
                 var note = NoteEntity(uid,spinner.selectedItem.toString(),edittext.text.toString())
                 db.noteDao().delete(note)
             }
-        } else {}
+        }
         clearText()
     }
 
@@ -143,10 +141,10 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
      * Initialize the category spinner.
      */
     fun initSpinner() {
-        spinner.setOnItemSelectedListener(this)
+        spinner.onItemSelectedListener = this
         val array_adapter = ArrayAdapter(this,R.layout.spinner_selected_item,list)
         array_adapter.setDropDownViewResource(R.layout.spinner_item)
-        spinner.setAdapter(array_adapter)
+        spinner.adapter = array_adapter
     }
 
     /**
