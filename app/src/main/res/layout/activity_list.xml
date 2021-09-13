@@ -4,13 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary">
+    android:background="@color/colorPrimary"
+    android:paddingHorizontal="8dp">
 
     <Spinner
         android:id="@+id/categoryListSpinner"
         style="@style/DarkTheme"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="62dp"
         android:dropDownWidth="match_parent"
         android:entries="@array/spinner_categories"
         android:gravity="center_horizontal"

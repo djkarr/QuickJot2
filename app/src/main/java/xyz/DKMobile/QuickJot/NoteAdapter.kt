@@ -15,7 +15,6 @@ RecyclerView.Adapter<NoteAdapter.ViewHolder>(){
     var list: ArrayList<String> = ArrayList()
 
     override fun getItemCount(): Int {
-        var size = items.size
         return items.size
     }
 
@@ -39,6 +38,9 @@ RecyclerView.Adapter<NoteAdapter.ViewHolder>(){
                 putExtra("text",text)
                 addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
             }
+            //TODO Review this change: Added this clear task flag so that any new edit activity will
+            //become the new root activity, so that ondestroy won't be called and edits won't be cleared out yet.
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(context,intent,null)
         }
     }

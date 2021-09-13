@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.*
@@ -53,7 +54,18 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         if(intentUID > -1){
             setEditConditions(intentUID)
         }
+
+        Log.i("EditActivity", "onCreate:  " + savedInstanceState.toString())
+        if(savedInstanceState != null){
+            val userText = savedInstanceState.getCharSequence("savedText")
+            edittext.setText(userText)
+            uid = savedInstanceState.getInt("uid")
+            editState = savedInstanceState.getBoolean("editState")
+        }
     }
+
+    //TODO Change the save button so that it stays in the current activity instead of bringing up a new note,
+    //as this is the far more common situation I find myself in.
 
     /**
      * After the listeners have been initialized, set the member variables to the saved values.
@@ -69,6 +81,7 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
+        Log.i("EditActivity", "onSaveInstantState Called")
         super.onSaveInstanceState(outState)
 
         val userText = edittext.text
@@ -82,7 +95,39 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         outState?.putInt("uid",saveUID)
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+    override fun onStop() {
+        // call the superclass method first
+        super.onStop()
+        Log.i("EditActivity", "onStop Called")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.i("EditActivity", "onResume Called")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.i("EditActivity", "onPause Called")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.i("EditActivity", "onStart Called")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i("EditActivity", "onDestroy Called")
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        Log.i("EditActivity", "onRestart Called")
+    }
+
+        override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        Log.i("EditActivity", "onRestoreInstanceState:  " + savedInstanceState.toString())
         super.onRestoreInstanceState(savedInstanceState)
 
         val userText = savedInstanceState?.getCharSequence("savedText")
@@ -160,6 +205,7 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
                 addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
             }
             startActivity(intent)
+            finish()
         }
     }
 
@@ -198,7 +244,8 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
                     }
                     toast("Note Updated!")
                 }
-                clearText()
+                //Removing this so that saving a change doesn't start a new edit activity
+                //clearText()
             } else {
                 toast("Nothing to save!")
             }

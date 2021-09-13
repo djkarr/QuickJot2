@@ -17,6 +17,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import androidx.core.app.ComponentActivity
+import androidx.core.app.ComponentActivity.ExtraData
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+
+
 
 /**
  * An activity which shows all notes in a two column, selectable list.
@@ -54,6 +60,7 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
             val index = list.indexOf(category)
             spinner.setSelection(index)
             sortByCategory(index)
+            //TODO Do I want to recreate the reverse order?
         }
 
     }
@@ -141,6 +148,7 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         addNew.setOnClickListener{
             val intent = Intent(this,EditActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
             startActivity(intent)
         }
