@@ -50,7 +50,7 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         rv = findViewById(R.id.recyclerViewNotes)
         rv.layoutManager = GridLayoutManager(this,2)
         val emptyList = arrayListOf<NoteEntity>()
-        //TODO notes are getting remade by initializer functions
+        //TODO notes are getting remade by initializer functions? Possibly.
         rv.adapter = NoteAdapter(emptyList, this)
         initListeners()
         if(savedInstanceState == null){
@@ -60,7 +60,6 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
             val index = list.indexOf(category)
             spinner.setSelection(index)
             sortByCategory(index)
-            //TODO Do I want to recreate the reverse order?
         }
 
     }
@@ -72,11 +71,7 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         outState?.putCharSequence("category",category)
     }
 
-//    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
-//        super.onRestoreInstanceState(savedInstanceState)
-//
-//    }
-
+    // Don't need to implement.
     override fun onNothingSelected(parent: AdapterView<*>?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -94,20 +89,6 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
     }
 
     /**
-     * This version sorts the notelist instead of making a new query. Breaks sorting function.
-     */
-    /*fun sortByCategory(position: Int){
-        val text: String = list[position]
-        var categorizedList: MutableList<NoteEntity> = ArrayList()
-        for(note in noteList){
-            if(note.category == text){
-                categorizedList.add(note)
-            }
-        }
-        rv.adapter = NoteAdapter(categorizedList, this@ListActivity)
-    } */
-
-    /**
      * This version sorts by making a new query.
      */
     fun sortByCategory(position: Int){
@@ -121,11 +102,7 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
                 } else {
                     noteList = db.noteDao().getByCategory(text)
                 }
-
-                //categorizedList = db.noteDao().getByCategory(text)
             }
-            //rv.adapter!!.notifyDataSetChanged()
-            //noteList = categorizedList
             rv.adapter = NoteAdapter(noteList, this@ListActivity)
         }
     }
@@ -189,37 +166,3 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         }
     }
 }
-
-/*
-----------------------------------------------Answer from StackOverflow------------------------------------
-In coroutines you can make a queue of non-identical coroutine codes. For example one block from coroutine1
-and another one from coroutine2 and make them run sequentially. It is possible using
-withContext(CoroutineContext)
-
-Assume this code:
-
-fun uiCode() {
-  // doing things specially on mainThread
-}
-
-fun uiCode2() {
-  // More work on mainThread
-}
-
-fun ioCode() {
-  // Doing something not related to mainThread.
-}
-
-fun main() {
-
-  launch(Dispatchers.Main) { // 1- run a coroutine
-     uiCode() // will run on MainThread
-     withContext(Dispachers.IO) { // 2- Coroutine will wait for ioCode
-         ioCode() // Will run on ioThread
-     }
-     uiCode2() // 3- And then it will run this part
-  }
-}
-
-If you wanted to do it asyncronously, use launch(), instead of withContext().
- */
