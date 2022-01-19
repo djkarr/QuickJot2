@@ -55,6 +55,8 @@
         android:hint="@string/edit_note_hint"
         android:inputType="textCapSentences|textMultiLine"
         android:padding="12sp"
+        android:scrollIndicators="end|right"
+        android:scrollbars="vertical"
         android:textColor="@color/colorAccent"
         android:textColorHint="@color/colorAccent"
         android:textSize="20sp"
