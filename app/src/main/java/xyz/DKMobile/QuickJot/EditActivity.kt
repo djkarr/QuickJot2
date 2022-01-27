@@ -16,6 +16,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import xyz.DKMobile.QuickJot.databinding.ActivityEditBinding
 
 /**
  * The activity where a note is being created/edited. Can categorize, save, delete,
@@ -24,22 +25,21 @@ import kotlinx.coroutines.launch
  * TODO decide if launching list or hitting back with an edit should prompt an 'are you sure?' dialog
  */
 class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
-    lateinit var edittext: EditText
-    lateinit var spinner: Spinner
-    lateinit var selection: String
+
+    private lateinit var binding: ActivityEditBinding
+
     lateinit var db: AppDatabase
 
-    var list = arrayOf("General","TO-DO","Shopping","Idea","Goals","Read / Watch","Remember")
+    var list = arrayOf("General", "TO-DO", "Shopping", "Idea", "Goals", "Read / Watch", "Remember")
     var editState = false
     var uid = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_edit)
+        binding = ActivityEditBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
         this.supportActionBar!!.hide()
-
-        edittext = findViewById(R.id.editText)
-        spinner = findViewById(R.id.categorySpinner)
 
         db = Room.databaseBuilder(
             applicationContext,
@@ -55,17 +55,14 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
             setEditConditions(intentUID)
         }
 
-        Log.i("EditActivity", "onCreate:  " + savedInstanceState.toString())
+//        Log.i("EditActivity", "onCreate:  " + savedInstanceState.toString())
         if(savedInstanceState != null){
             val userText = savedInstanceState.getCharSequence("savedText")
-            edittext.setText(userText)
+            binding.editText.setText(userText)
             uid = savedInstanceState.getInt("uid")
             editState = savedInstanceState.getBoolean("editState")
         }
     }
-
-    //TODO Change the save button so that it stays in the current activity instead of bringing up a new note,
-    //as this is the far more common situation I find myself in.
 
     /**
      * After the listeners have been initialized, set the member variables to the saved values.
@@ -75,18 +72,16 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         editState = true
         var savedCategory = intent.getStringExtra("category")
         var spinnerIndex = list.indexOf(savedCategory)
-        spinner.setSelection(spinnerIndex)
+        binding.categorySpinner.setSelection(spinnerIndex)
         var text = intent.getStringExtra("text")
-        edittext.setText(text)
+        binding.editText.setText(text)
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
         Log.i("EditActivity", "onSaveInstantState Called")
         super.onSaveInstanceState(outState)
 
-        val userText = edittext.text
-        //Don't need category?
-        //val category = spinner.selectedItem.toString()
+        val userText = binding.editText.text
         val saveEditState = editState
         val saveUID = uid
 
@@ -96,42 +91,41 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
     }
 
     override fun onStop() {
-        // call the superclass method first
         super.onStop()
-        Log.i("EditActivity", "onStop Called")
+//        Log.i("EditActivity", "onStop Called")
     }
 
     override fun onResume() {
         super.onResume()
-        Log.i("EditActivity", "onResume Called")
+//        Log.i("EditActivity", "onResume Called")
     }
 
     override fun onPause() {
         super.onPause()
-        Log.i("EditActivity", "onPause Called")
+//        Log.i("EditActivity", "onPause Called")
     }
 
     override fun onStart() {
         super.onStart()
-        Log.i("EditActivity", "onStart Called")
+//        Log.i("EditActivity", "onStart Called")
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.i("EditActivity", "onDestroy Called")
+//        Log.i("EditActivity", "onDestroy Called")
     }
 
     override fun onRestart() {
         super.onRestart()
-        Log.i("EditActivity", "onRestart Called")
+//        Log.i("EditActivity", "onRestart Called")
     }
 
         override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
-        Log.i("EditActivity", "onRestoreInstanceState:  " + savedInstanceState.toString())
+//        Log.i("EditActivity", "onRestoreInstanceState:  " + savedInstanceState.toString())
         super.onRestoreInstanceState(savedInstanceState)
 
         val userText = savedInstanceState?.getCharSequence("savedText")
-        edittext.setText(userText)
+            binding.editText.setText(userText)
         uid = savedInstanceState!!.getInt("uid")
         editState = savedInstanceState!!.getBoolean("editState")
     }
@@ -157,7 +151,11 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
     fun deletePositiveClick() {
         if(editState){
             GlobalScope.launch(Dispatchers.IO){
-                var note = NoteEntity(uid,spinner.selectedItem.toString(),edittext.text.toString())
+                var note = NoteEntity(
+                    uid,
+                    binding.categorySpinner.selectedItem.toString(),
+                    binding.editText.text.toString()
+                )
                 db.noteDao().delete(note)
             }
         } else {}
@@ -168,9 +166,9 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
      * Reset the activity to a blank state with the first spinner item selected.
      */
     fun clearText() {
-        edittext.setText("")
+        binding.editText.setText("")
         uid = 0
-        spinner.setSelection(0)
+        binding.categorySpinner.setSelection(0)
         editState = false
     }
 
@@ -188,10 +186,10 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
      * Initialize the category spinner.
      */
     fun initSpinner() {
-        spinner.setOnItemSelectedListener(this)
+        binding.categorySpinner.setOnItemSelectedListener(this)
         val array_adapter = ArrayAdapter(this,R.layout.spinner_selected_item,list)
         array_adapter.setDropDownViewResource(R.layout.spinner_item)
-        spinner.setAdapter(array_adapter)
+        binding.categorySpinner.setAdapter(array_adapter)
     }
 
     /**
@@ -226,19 +224,27 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
     fun initSave() {
         val saveButton = findViewById<FloatingActionButton>(R.id.save_note_fab)
         saveButton.setOnClickListener {
-            if(edittext.text.toString() != ""){
+            if (binding.editText.text.toString() != "") {
                 val note: NoteEntity
-                if(!editState){
-                    note = NoteEntity(0,spinner.selectedItem.toString(),edittext.text.toString())
+                if (!editState) {
+                    note = NoteEntity(
+                        0,
+                        binding.categorySpinner.selectedItem.toString(),
+                        binding.editText.text.toString()
+                    )
                     uid = note.uid
-                    GlobalScope.launch(Dispatchers.IO){
+                    GlobalScope.launch(Dispatchers.IO) {
                         var longUID = db.noteDao().insert(note)
                         uid = longUID.toInt()
                     }
                     toast("Note Saved!")
                     editState = true
                 } else {
-                    note = NoteEntity(uid,spinner.selectedItem.toString(),edittext.text.toString())
+                    note = NoteEntity(
+                        uid,
+                        binding.categorySpinner.selectedItem.toString(),
+                        binding.editText.text.toString()
+                    )
                     GlobalScope.launch(Dispatchers.IO){
                         db.noteDao().update(note)
                     }
