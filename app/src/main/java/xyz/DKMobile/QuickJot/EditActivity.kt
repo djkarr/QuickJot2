@@ -5,10 +5,11 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.View
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.room.Room
@@ -28,11 +29,11 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
 
     private lateinit var binding: ActivityEditBinding
 
-    lateinit var db: AppDatabase
+    private lateinit var db: AppDatabase
 
     var list = arrayOf("General", "TO-DO", "Shopping", "Idea", "Goals", "Read / Watch", "Remember")
-    var editState = false
-    var uid = 0
+    private var editState = false
+    private var uid = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,14 +50,13 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         initListeners()
 
         //Get uid from intent and check if it's valid
-        val intentUID = intent.getIntExtra("uid",-1)
+        val intentUID = intent.getIntExtra("uid", -1)
         //If editing existing note from database
-        if(intentUID > -1){
+        if (intentUID > -1) {
             setEditConditions(intentUID)
         }
 
-//        Log.i("EditActivity", "onCreate:  " + savedInstanceState.toString())
-        if(savedInstanceState != null){
+        if (savedInstanceState != null) {
             val userText = savedInstanceState.getCharSequence("savedText")
             binding.editText.setText(userText)
             uid = savedInstanceState.getInt("uid")
@@ -67,67 +67,35 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
     /**
      * After the listeners have been initialized, set the member variables to the saved values.
      */
-    fun setEditConditions(intentUID: Int){
+    private fun setEditConditions(intentUID: Int) {
         uid = intentUID
         editState = true
-        var savedCategory = intent.getStringExtra("category")
-        var spinnerIndex = list.indexOf(savedCategory)
+        val savedCategory = intent.getStringExtra("category")
+        val spinnerIndex = list.indexOf(savedCategory)
         binding.categorySpinner.setSelection(spinnerIndex)
-        var text = intent.getStringExtra("text")
+        val text = intent.getStringExtra("text")
         binding.editText.setText(text)
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
-        Log.i("EditActivity", "onSaveInstantState Called")
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
         val userText = binding.editText.text
         val saveEditState = editState
         val saveUID = uid
 
-        outState?.putCharSequence("savedText",userText)
-        outState?.putBoolean("editState",saveEditState)
-        outState?.putInt("uid",saveUID)
+        outState.putCharSequence("savedText", userText)
+        outState.putBoolean("editState", saveEditState)
+        outState.putInt("uid", saveUID)
     }
 
-    override fun onStop() {
-        super.onStop()
-//        Log.i("EditActivity", "onStop Called")
-    }
-
-    override fun onResume() {
-        super.onResume()
-//        Log.i("EditActivity", "onResume Called")
-    }
-
-    override fun onPause() {
-        super.onPause()
-//        Log.i("EditActivity", "onPause Called")
-    }
-
-    override fun onStart() {
-        super.onStart()
-//        Log.i("EditActivity", "onStart Called")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-//        Log.i("EditActivity", "onDestroy Called")
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-//        Log.i("EditActivity", "onRestart Called")
-    }
-
-        override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
-//        Log.i("EditActivity", "onRestoreInstanceState:  " + savedInstanceState.toString())
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
 
-        val userText = savedInstanceState?.getCharSequence("savedText")
-            binding.editText.setText(userText)
-        uid = savedInstanceState!!.getInt("uid")
-        editState = savedInstanceState!!.getBoolean("editState")
+        val userText = savedInstanceState.getCharSequence("savedText")
+        binding.editText.setText(userText)
+        uid = savedInstanceState.getInt("uid")
+        editState = savedInstanceState.getBoolean("editState")
     }
 
     /**
@@ -148,24 +116,25 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
      * User clicks Yes to delete dialog message. Deletes from database, or simply clears the screen
      * if it hasn't been stored yet.
      */
-    fun deletePositiveClick() {
-        if(editState){
-            GlobalScope.launch(Dispatchers.IO){
-                var note = NoteEntity(
+    private fun deletePositiveClick() {
+        if (editState) {
+            GlobalScope.launch(Dispatchers.IO) {
+                val note = NoteEntity(
                     uid,
                     binding.categorySpinner.selectedItem.toString(),
                     binding.editText.text.toString()
                 )
                 db.noteDao().delete(note)
             }
-        } else {}
+        } else {//intentionally blank
+        }
         clearText()
     }
 
     /**
      * Reset the activity to a blank state with the first spinner item selected.
      */
-    fun clearText() {
+    private fun clearText() {
         binding.editText.setText("")
         uid = 0
         binding.categorySpinner.setSelection(0)
@@ -175,7 +144,7 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
     /**
      * Initialize the various listeners.
      */
-    fun initListeners() {
+    private fun initListeners() {
         initSpinner()
         initList()
         initDelete()
@@ -185,20 +154,20 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
     /**
      * Initialize the category spinner.
      */
-    fun initSpinner() {
-        binding.categorySpinner.setOnItemSelectedListener(this)
-        val array_adapter = ArrayAdapter(this,R.layout.spinner_selected_item,list)
-        array_adapter.setDropDownViewResource(R.layout.spinner_item)
-        binding.categorySpinner.setAdapter(array_adapter)
+    private fun initSpinner() {
+        binding.categorySpinner.onItemSelectedListener = this
+        val arrayAdapter = ArrayAdapter(this, R.layout.spinner_selected_item, list)
+        arrayAdapter.setDropDownViewResource(R.layout.spinner_item)
+        binding.categorySpinner.adapter = arrayAdapter
     }
 
     /**
      * Clicking the list view fab starts the List View Activity.
      */
-    fun initList() {
+    private fun initList() {
         val listButton = findViewById<FloatingActionButton>(R.id.list_view_fab)
         listButton.setOnClickListener {
-            val intent = Intent(this,ListActivity::class.java).apply {
+            val intent = Intent(this, ListActivity::class.java).apply {
                 //addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                 addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
             }
@@ -210,7 +179,7 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
     /**
      * Clicking the delete fab starts a call the the delete dialog.
      */
-    fun initDelete() {
+    private fun initDelete() {
         val deleteButton = findViewById<FloatingActionButton>(R.id.delete_fab)
         deleteButton.setOnClickListener {
             showDeleteDialog()
@@ -221,7 +190,7 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
      * Clicking the save button causes the note to be saved.
      * Either as a new database entry or as an update to an existing one.
      */
-    fun initSave() {
+    private fun initSave() {
         val saveButton = findViewById<FloatingActionButton>(R.id.save_note_fab)
         saveButton.setOnClickListener {
             if (binding.editText.text.toString() != "") {
@@ -234,7 +203,7 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
                     )
                     uid = note.uid
                     GlobalScope.launch(Dispatchers.IO) {
-                        var longUID = db.noteDao().insert(note)
+                        val longUID = db.noteDao().insert(note)
                         uid = longUID.toInt()
                     }
                     toast("Note Saved!")
@@ -245,7 +214,7 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
                         binding.categorySpinner.selectedItem.toString(),
                         binding.editText.text.toString()
                     )
-                    GlobalScope.launch(Dispatchers.IO){
+                    GlobalScope.launch(Dispatchers.IO) {
                         db.noteDao().update(note)
                     }
                     toast("Note Updated!")
@@ -262,40 +231,40 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
     /**
      * Extension function to show toast message.
      */
-    fun Context.toast(message: String) {
-        var toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
-        toast.setGravity(Gravity.CENTER,0,480)
+    private fun Context.toast(message: String) {
+        val toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
+        toast.setGravity(Gravity.CENTER, 0, 480)
         toast.show()
     }
 
-    fun doNothing() {}
+    private fun doNothing() {}
 
     /**
      * Creates and shows an alert dialog to verify if user wants to delete the note.
      */
-    fun showDeleteDialog() {
+    private fun showDeleteDialog() {
         // Late initialize an alert dialog object
         lateinit var dialog: AlertDialog
 
         // Initialize a new instance of alert dialog builder object
-        val builder = AlertDialog.Builder(this,R.style.DialogTheme)
+        val builder = AlertDialog.Builder(this, R.style.DialogTheme)
 
         // Set a title for alert dialog
         builder.setTitle("Delete this note?")
 
         // On click listener for dialog buttons
-        val dialogClickListener = DialogInterface.OnClickListener{ _, which ->
-            when(which){
+        val dialogClickListener = DialogInterface.OnClickListener { _, which ->
+            when (which) {
                 DialogInterface.BUTTON_POSITIVE -> deletePositiveClick()
                 DialogInterface.BUTTON_NEGATIVE -> doNothing()
             }
         }
 
         // Set the alert dialog positive/yes button
-        builder.setPositiveButton("YES",dialogClickListener)
+        builder.setPositiveButton("YES", dialogClickListener)
 
         // Set the alert dialog negative/no button
-        builder.setNegativeButton("NO ",dialogClickListener)
+        builder.setNegativeButton("NO ", dialogClickListener)
 
         // Initialize the AlertDialog using builder object
         dialog = builder.create()
@@ -303,8 +272,10 @@ class EditActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
         // Finally, display the alert dialog
         dialog.show()
         //Set button colors
-        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setBackgroundColor(Color.parseColor("#4d648d"))
-        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setBackgroundColor(Color.parseColor("#d0e1f9"))
+        dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+            .setBackgroundColor(Color.parseColor("#4d648d"))
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE)
+            .setBackgroundColor(Color.parseColor("#d0e1f9"))
         dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(Color.parseColor("#1e1f26"))
     }
 }
