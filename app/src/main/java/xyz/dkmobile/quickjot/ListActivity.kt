@@ -1,4 +1,4 @@
-package xyz.DKMobile.QuickJot
+package xyz.dkmobile.quickjot
 
 import android.content.Context
 import android.content.Intent
@@ -6,38 +6,35 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import androidx.core.app.ComponentActivity
-import androidx.core.app.ComponentActivity.ExtraData
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-
+import xyz.dkmobile.quickjot.databinding.ActivityListBinding
 
 
 /**
  * An activity which shows all notes in a two column, selectable list.
  */
 class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
-    var noteList: List<NoteEntity> = ArrayList()
-    lateinit var db: AppDatabase
-    lateinit var rv: RecyclerView
 
-    var list = arrayOf("All","General","TO-DO","Shopping","Idea","Goals","Read / Watch","Remember")
-    lateinit var spinner: Spinner
+    private lateinit var binding: ActivityListBinding
+    private var noteList: List<NoteEntity> = ArrayList()
+    private lateinit var db: AppDatabase
+
+    var list =
+        arrayOf("All", "General", "TO-DO", "Shopping", "Idea", "Goals", "Read / Watch", "Remember")
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_list)
+        binding = ActivityListBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
         this.supportActionBar!!.hide()
 
         //Database
@@ -46,29 +43,26 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
             AppDatabase::class.java, "notes.db"
         ).build()
 
-        spinner = findViewById(R.id.categoryListSpinner)
-        rv = findViewById(R.id.recyclerViewNotes)
-        rv.layoutManager = GridLayoutManager(this,2)
+        binding.recyclerViewNotes.layoutManager = GridLayoutManager(this, 2)
         val emptyList = arrayListOf<NoteEntity>()
-        //TODO notes are getting remade by initializer functions? Possibly.
-        rv.adapter = NoteAdapter(emptyList, this)
+        binding.recyclerViewNotes.adapter = NoteAdapter(emptyList, this)
         initListeners()
-        if(savedInstanceState == null){
+        if (savedInstanceState == null) {
             addNotes(this)
         } else {
-            val category = savedInstanceState?.getCharSequence("category")
+            val category = savedInstanceState.getCharSequence("category")
             val index = list.indexOf(category)
-            spinner.setSelection(index)
+            binding.categoryListSpinner.setSelection(index)
             sortByCategory(index)
         }
 
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        val category = spinner.selectedItem.toString()
-        outState?.putCharSequence("category",category)
+        val category = binding.categoryListSpinner.selectedItem.toString()
+        outState.putCharSequence("category", category)
     }
 
     // Don't need to implement.
@@ -81,7 +75,7 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
      * It then only displays those notes.
      */
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        if(position != 0){
+        if (position != 0) {
             sortByCategory(position)
         } else {
             addNotes(this)
@@ -91,27 +85,25 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
     /**
      * This version sorts by making a new query.
      */
-    fun sortByCategory(position: Int){
+    private fun sortByCategory(position: Int) {
         val text: String = list[position]
-        //var categorizedList: List<NoteEntity> = ArrayList()
 
         GlobalScope.launch(Dispatchers.Main) {
             withContext(Dispatchers.IO) {
-                if(position == 0){
-                    noteList = db.noteDao().getAll()
+                noteList = if (position == 0) {
+                    db.noteDao().getAll()
                 } else {
-                    noteList = db.noteDao().getByCategory(text)
+                    db.noteDao().getByCategory(text)
                 }
             }
-            rv.adapter = NoteAdapter(noteList, this@ListActivity)
+            binding.recyclerViewNotes.adapter = NoteAdapter(noteList, this@ListActivity)
         }
     }
-
 
     /**
      * Initialize the listeners.
      */
-    fun initListeners(){
+    private fun initListeners() {
         initSpinner()
         initSort()
         initAddNew()
@@ -120,10 +112,10 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
     /**
      * User clicks the 'Add New' button and the edit activity is launched.
      */
-    fun initAddNew(){
+    private fun initAddNew() {
         val addNew = findViewById<FloatingActionButton>(R.id.add_new_fab)
-        addNew.setOnClickListener{
-            val intent = Intent(this,EditActivity::class.java).apply {
+        addNew.setOnClickListener {
+            val intent = Intent(this, EditActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
@@ -134,35 +126,35 @@ class ListActivity : AdapterView.OnItemSelectedListener, AppCompatActivity() {
     /**
      * Initializes the sort button. Reverses the starting order.
      */
-    fun initSort(){
+    private fun initSort() {
         val sort = findViewById<FloatingActionButton>(R.id.sort_list_fab)
-        sort.setOnClickListener{
+        sort.setOnClickListener {
             noteList = noteList.asReversed()
-            rv.adapter = NoteAdapter(noteList,this)
+            binding.recyclerViewNotes.adapter = NoteAdapter(noteList, this)
         }
     }
 
     /**
      * Initializes the category spinner.
      */
-    fun initSpinner() {
-        spinner.onItemSelectedListener = this
-        val array_adapter = ArrayAdapter(this,R.layout.list_spinner_selected_item,list)
-        array_adapter.setDropDownViewResource(R.layout.spinner_item)
-        spinner.adapter = array_adapter
+    private fun initSpinner() {
+        binding.categoryListSpinner.onItemSelectedListener = this
+        val arrayAdapter = ArrayAdapter(this, R.layout.list_spinner_selected_item, list)
+        arrayAdapter.setDropDownViewResource(R.layout.spinner_item)
+        binding.categoryListSpinner.adapter = arrayAdapter
     }
 
     /**
      * Queries the database for all notes to populate the activity.
      * Then sets the recycler view adapter and layout manager.
      */
-    fun addNotes(context: Context){
-        GlobalScope.launch(Dispatchers.Main){
-            withContext(Dispatchers.IO){
+    private fun addNotes(context: Context) {
+        GlobalScope.launch(Dispatchers.Main) {
+            withContext(Dispatchers.IO) {
                 noteList = db.noteDao().getAll()
             }
-            rv.adapter = NoteAdapter(noteList,context)
-            rv.layoutManager = GridLayoutManager(context,2)
+            binding.recyclerViewNotes.adapter = NoteAdapter(noteList, context)
+            binding.recyclerViewNotes.layoutManager = GridLayoutManager(context, 2)
         }
     }
 }

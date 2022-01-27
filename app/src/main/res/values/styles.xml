@@ -14,12 +14,6 @@
 
     <style name="DarkTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:background">@color/colorPrimaryDark</item>
-<!--        <item name="android:textColor">@color/colorGlowing</item>-->
-    </style>
-
-    <style name="PrimaryTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="android:background">@color/colorPrimary</item>
-        <item name="android:textColor">@color/colorAccent</item>
     </style>
 
     <style name="LightTheme" parent="Theme.AppCompat.Light.DarkActionBar">
