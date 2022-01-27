@@ -1,4 +1,4 @@
-package xyz.DKMobile.QuickJot
+package xyz.dkmobile.quickjot
 
 import android.content.Context
 import android.content.Intent
@@ -14,7 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import xyz.DKMobile.QuickJot.databinding.ActivityListBinding
+import xyz.dkmobile.quickjot.databinding.ActivityListBinding
 
 
 /**

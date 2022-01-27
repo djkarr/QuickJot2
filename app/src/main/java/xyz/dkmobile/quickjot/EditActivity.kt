@@ -1,4 +1,4 @@
-package xyz.DKMobile.QuickJot
+package xyz.dkmobile.quickjot
 
 import android.content.Context
 import android.content.DialogInterface
@@ -17,7 +17,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import xyz.DKMobile.QuickJot.databinding.ActivityEditBinding
+import xyz.dkmobile.quickjot.databinding.ActivityEditBinding
 
 /**
  * The activity where a note is being created/edited. Can categorize, save, delete,

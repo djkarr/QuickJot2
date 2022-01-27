@@ -1,4 +1,4 @@
-package xyz.DKMobile.QuickJot
+package xyz.dkmobile.quickjot
 
 import androidx.room.*
 
@@ -14,7 +14,7 @@ interface NoteDAO {
     suspend fun getByCategory(category: String): List<NoteEntity>
 
     @Insert
-    suspend fun insert(note: NoteEntity):Long
+    suspend fun insert(note: NoteEntity): Long
 
 //SELECT ROWID from SQL_LITE_SEQUENCE order by ROWID DESC limit 1
 

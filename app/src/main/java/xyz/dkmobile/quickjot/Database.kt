@@ -1,4 +1,4 @@
-package xyz.DKMobile.QuickJot
+package xyz.dkmobile.quickjot
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

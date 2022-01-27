@@ -9,12 +9,11 @@
     tools:context=".EditActivity">
 
     <TextView
-        android:id="@+id/textView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/colorPrimaryLight"
         android:gravity="center"
-        android:text="Category:"
+        android:text="@string/categoryLabel"
         android:textColor="@color/colorAccent"
         android:textSize="20sp"
         android:textStyle="bold"
